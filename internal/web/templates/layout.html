@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{block "title" .}}TheShop 後台{{end}}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+{{if .User}}
+<header class="topbar">
+  <a class="brand" href="/orders">TheShop 後台</a>
+  <nav>
+    <a href="/orders" class="{{if hasPrefix .Active "order"}}active{{end}}">訂單</a>
+    <a href="/products" class="{{if hasPrefix .Active "product"}}active{{end}}">商品</a>
+    <a href="/accounts" class="{{if eq .Active "accounts"}}active{{end}}">管理員</a>
+  </nav>
+  <form method="post" action="/logout" class="logout">
+    <span class="muted">{{.User.Account}}</span>
+    <button type="submit" class="btn btn-ghost">登出</button>
+  </form>
+</header>
+{{end}}
+<main class="container">
+  {{if .Msg}}<div class="flash ok" role="status">{{.Msg}}</div>{{end}}
+  {{if .Err}}<div class="flash err" role="alert">{{.Err}}</div>{{end}}
+  {{template "content" .}}
+</main>
+</body>
+</html>

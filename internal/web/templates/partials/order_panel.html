@@ -1,0 +1,52 @@
+{{define "order_panel"}}
+<section id="order-panel" class="card">
+  {{if .Msg}}<div class="flash ok" role="status">{{.Msg}}</div>{{end}}
+  {{if .Err}}<div class="flash err" role="alert">{{.Err}}</div>{{end}}
+  {{with .Order}}
+  <div class="card-head">
+    <h1>訂單 #{{.ID}}</h1>
+    <span class="badge status-{{.Status}}">{{statusLabel .Status}}</span>
+  </div>
+  <dl class="kv">
+    <dt>帳號 ID</dt><dd>{{.AccountID}}</dd>
+    <dt>建立時間</dt><dd>{{.CreateTime}}</dd>
+    <dt>總金額</dt><dd>${{money .Total}}</dd>
+    <dt>物流</dt><dd>#{{.Delivery.DeliveryID}} {{.Delivery.StoreName}}</dd>
+    <dt>收件人</dt><dd>{{.Delivery.ReceiverName}} {{.Delivery.ReceiverPhone}}</dd>
+  </dl>
+  <h2>明細</h2>
+  <table>
+    <thead><tr><th>商品 ID</th><th class="num">數量</th><th class="num">小計</th></tr></thead>
+    <tbody>
+    {{range .Items}}
+      <tr><td><a href="/products/{{.ProductID}}/edit">#{{.ProductID}}</a></td><td class="num">{{.Num}}</td><td class="num">${{money .SubTotal}}</td></tr>
+    {{else}}
+      <tr><td colspan="3" class="muted">沒有明細</td></tr>
+    {{end}}
+    </tbody>
+  </table>
+  {{$next := nextStatuses .Status}}
+  {{if $next}}
+  <div class="actions">
+    {{range $next}}
+    <form method="post" action="/orders/{{$.Order.ID}}/status"
+          hx-post="/orders/{{$.Order.ID}}/status" hx-target="#order-panel" hx-swap="outerHTML"
+          {{if eq . "cancelled"}}hx-confirm="確定要取消這張訂單嗎？庫存會回補。"{{end}}>
+      <input type="hidden" name="status" value="{{.}}">
+      <button type="submit" class="btn {{if eq . "cancelled"}}btn-danger{{else}}btn-primary{{end}}">轉為「{{statusLabel .}}」</button>
+    </form>
+    {{end}}
+  </div>
+  {{else}}
+  <p class="muted">此訂單已是終態，沒有可執行的狀態流轉。</p>
+  {{end}}
+  {{end}}
+</section>
+{{end}}
+
+{{define "order_panel_error"}}
+<section id="order-panel" class="card">
+  <div class="flash err" role="alert">{{.Err}}</div>
+  <a class="btn" href="/orders">回訂單列表</a>
+</section>
+{{end}}

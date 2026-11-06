@@ -1,0 +1,36 @@
+{{define "title"}}{{if .IsNew}}新增商品{{else}}編輯商品 #{{.Form.ID}}{{end}} - TheShop 後台{{end}}
+{{define "content"}}
+<p><a href="/products">← 回商品列表</a></p>
+<section class="card">
+  <div class="card-head">
+    <h1>{{if .IsNew}}新增商品{{else}}編輯商品 #{{.Form.ID}}{{end}}</h1>
+    {{with .Product}}{{if eq .Status 1}}<span class="badge on">上架</span>{{else}}<span class="badge off">下架</span>{{end}}{{end}}
+  </div>
+  <form method="post" action="{{if .IsNew}}/products{{else}}/products/{{.Form.ID}}{{end}}" class="stack">
+    <label>名稱<input type="text" name="name" value="{{.Form.Name}}" required maxlength="100"></label>
+    <div class="row">
+      <label>價格<input type="number" name="price" value="{{.Form.Price}}" min="0" step="0.01" required></label>
+      <label>庫存<input type="number" name="stock" value="{{.Form.Stock}}" min="0" step="1" required></label>
+    </div>
+    <label>規格／描述<textarea name="spec" rows="4">{{.Form.Spec}}</textarea></label>
+    <label>主圖 URL（banner）<input type="url" name="banner" value="{{.Form.Banner}}" placeholder="https://..."></label>
+    <label>其他圖片 URL（一行一個）<textarea name="images" rows="3" placeholder="https://...">{{.Form.Images}}</textarea></label>
+    <div class="actions">
+      <button type="submit" class="btn btn-primary">{{if .IsNew}}建立{{else}}儲存{{end}}</button>
+    </div>
+  </form>
+  {{with .Product}}
+  <hr>
+  <form method="post" action="/products/{{.ID}}/status" class="inline">
+    <input type="hidden" name="back" value="/products/{{.ID}}/edit">
+    {{if eq .Status 1}}
+    <input type="hidden" name="status" value="0">
+    <button type="submit" class="btn btn-danger" onclick="return confirm('確定要下架這個商品嗎？前台會看不到、也不能下單。')">下架商品</button>
+    {{else}}
+    <input type="hidden" name="status" value="1">
+    <button type="submit" class="btn">重新上架</button>
+    {{end}}
+  </form>
+  {{end}}
+</section>
+{{end}}

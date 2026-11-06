@@ -1,0 +1,38 @@
+{{define "title"}}商品 - TheShop 後台{{end}}
+{{define "content"}}
+<div class="page-head">
+  <h1>商品</h1>
+  <a class="btn btn-primary" href="/products/new">新增商品</a>
+</div>
+<table>
+  <thead><tr><th>編號</th><th>圖</th><th>名稱</th><th class="num">價格</th><th class="num">庫存</th><th>狀態</th><th></th></tr></thead>
+  <tbody>
+  {{range .Products}}
+    <tr class="{{if eq .Status 0}}dim{{end}}">
+      <td>#{{.ID}}</td>
+      <td>{{if .Banner}}<img class="thumb" src="{{.Banner}}" alt="">{{end}}</td>
+      <td>{{.Name}}</td>
+      <td class="num">${{money .Price}}</td>
+      <td class="num">{{.Stock}}</td>
+      <td>{{if eq .Status 1}}<span class="badge on">上架</span>{{else}}<span class="badge off">下架</span>{{end}}</td>
+      <td class="num actions-inline">
+        <a class="btn btn-small" href="/products/{{.ID}}/edit">編輯</a>
+        <form method="post" action="/products/{{.ID}}/status" class="inline">
+          <input type="hidden" name="back" value="/products?page={{$.Page}}">
+          {{if eq .Status 1}}
+          <input type="hidden" name="status" value="0">
+          <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('確定要下架「{{.Name}}」嗎？')">下架</button>
+          {{else}}
+          <input type="hidden" name="status" value="1">
+          <button type="submit" class="btn btn-small">上架</button>
+          {{end}}
+        </form>
+      </td>
+    </tr>
+  {{else}}
+    <tr><td colspan="7" class="muted">沒有商品</td></tr>
+  {{end}}
+  </tbody>
+</table>
+{{template "pager" (dict "Page" .Page "HasNext" .HasNext "Base" "/products" "Query" "")}}
+{{end}}

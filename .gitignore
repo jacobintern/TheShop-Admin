@@ -1,0 +1,11 @@
+# runtime
+data/
+*.db
+*.db-wal
+*.db-shm
+.env
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/

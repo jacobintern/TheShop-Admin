@@ -1,0 +1,34 @@
+{{define "title"}}訂單 - TheShop 後台{{end}}
+{{define "content"}}
+<div class="page-head">
+  <h1>訂單</h1>
+  <form method="get" action="/orders" class="inline">
+    <label>狀態
+      <select name="status" onchange="this.form.submit()">
+        <option value="" {{if eq .Status ""}}selected{{end}}>全部</option>
+        {{range .Statuses}}<option value="{{.}}" {{if eq . $.Status}}selected{{end}}>{{statusLabel .}}</option>{{end}}
+      </select>
+    </label>
+    <noscript><button type="submit" class="btn">篩選</button></noscript>
+  </form>
+</div>
+<table>
+  <thead><tr><th>編號</th><th>狀態</th><th>帳號 ID</th><th class="num">金額</th><th>收件人</th><th>建立時間</th><th></th></tr></thead>
+  <tbody>
+  {{range .Orders}}
+    <tr>
+      <td>#{{.ID}}</td>
+      <td><span class="badge status-{{.Status}}">{{statusLabel .Status}}</span></td>
+      <td>{{.AccountID}}</td>
+      <td class="num">${{money .Total}}</td>
+      <td>{{.Delivery.ReceiverName}}</td>
+      <td>{{.CreateTime}}</td>
+      <td class="num"><a class="btn btn-small" href="/orders/{{.ID}}">檢視</a></td>
+    </tr>
+  {{else}}
+    <tr><td colspan="7" class="muted">沒有訂單</td></tr>
+  {{end}}
+  </tbody>
+</table>
+{{template "pager" (dict "Page" .Page "HasNext" .HasNext "Base" "/orders" "Query" (printf "status=%s" .Status))}}
+{{end}}

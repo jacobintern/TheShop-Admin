@@ -1,0 +1,5 @@
+{{define "title"}}訂單 #{{.Order.ID}} - TheShop 後台{{end}}
+{{define "content"}}
+<p><a href="/orders">← 回訂單列表</a></p>
+{{template "order_panel" (dict "Order" .Order)}}
+{{end}}

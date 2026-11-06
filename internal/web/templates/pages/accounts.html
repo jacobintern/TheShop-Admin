@@ -1,0 +1,42 @@
+{{define "title"}}管理員 - TheShop 後台{{end}}
+{{define "content"}}
+<div class="page-head"><h1>管理員帳號</h1></div>
+<table>
+  <thead><tr><th>ID</th><th>帳號</th><th>建立時間</th><th></th></tr></thead>
+  <tbody>
+  {{range .Accounts}}
+    <tr>
+      <td>{{.ID}}</td>
+      <td>{{.Account}}{{if eq .ID $.Me.ID}} <span class="muted">（我）</span>{{end}}</td>
+      <td>{{.CreateTime.Format "2006-01-02 15:04"}}</td>
+      <td class="num">
+        {{if ne .ID $.Me.ID}}
+        <form method="post" action="/accounts/{{.ID}}/delete" class="inline">
+          <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('確定要刪除管理員「{{.Account}}」嗎？')">刪除</button>
+        </form>
+        {{end}}
+      </td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+<div class="grid-2">
+  <section class="card">
+    <h2>新增管理員</h2>
+    <form method="post" action="/accounts" class="stack">
+      <label>帳號<input type="text" name="account" required autocomplete="off"></label>
+      <label>密碼（至少 8 碼）<input type="password" name="password" required minlength="8" autocomplete="new-password"></label>
+      <button type="submit" class="btn btn-primary">新增</button>
+    </form>
+  </section>
+  <section class="card">
+    <h2>修改我的密碼</h2>
+    <form method="post" action="/accounts/password" class="stack">
+      <label>舊密碼<input type="password" name="old_password" required autocomplete="current-password"></label>
+      <label>新密碼（至少 8 碼）<input type="password" name="new_password" required minlength="8" autocomplete="new-password"></label>
+      <label>再輸入一次新密碼<input type="password" name="confirm_password" required minlength="8" autocomplete="new-password"></label>
+      <button type="submit" class="btn btn-primary">更新密碼</button>
+    </form>
+  </section>
+</div>
+{{end}}

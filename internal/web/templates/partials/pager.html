@@ -1,0 +1,7 @@
+{{define "pager"}}
+<nav class="pager">
+  {{if gt .Page 1}}<a class="btn btn-small" href="{{.Base}}?page={{add .Page -1}}{{if .Query}}&{{.Query}}{{end}}">上一頁</a>{{end}}
+  <span class="muted">第 {{.Page}} 頁</span>
+  {{if .HasNext}}<a class="btn btn-small" href="{{.Base}}?page={{add .Page 1}}{{if .Query}}&{{.Query}}{{end}}">下一頁</a>{{end}}
+</nav>
+{{end}}
