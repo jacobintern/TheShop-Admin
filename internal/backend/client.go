@@ -94,13 +94,14 @@ type Product struct {
 	Images []ProductImage `json:"images"`
 }
 
-// ProductInput 是新增／修改商品的 body。Images 為 nil 時修改不動圖片。
+// ProductInput 是新增／修改商品的 body。
+// backend 規則：修改時 images 沒帶就不動圖片、帶空陣列會清空，所以後台一律帶完整陣列（表單就是整組）。
 type ProductInput struct {
 	Name   string         `json:"name"`
 	Price  float64        `json:"price"`
 	Stock  int            `json:"stock"`
 	Spec   string         `json:"spec"`
-	Images []ProductImage `json:"images,omitempty"`
+	Images []ProductImage `json:"images"`
 }
 
 type Client struct {

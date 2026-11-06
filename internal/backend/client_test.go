@@ -63,6 +63,19 @@ func TestClient_ForbiddenWithoutJSONBody(t *testing.T) {
 	assert.Equal(t, http.StatusForbidden, be.HTTPStatus)
 }
 
+func TestClient_UpdateProduct_EmptyImagesIsSentAsArray(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var raw map[string]json.RawMessage
+		require.NoError(t, json.NewDecoder(r.Body).Decode(&raw))
+		assert.JSONEq(t, "[]", string(raw["images"]))
+		_ = json.NewEncoder(w).Encode(map[string]any{"code": 0, "msg": "success", "data": map[string]any{"id": 1}})
+	}))
+	defer srv.Close()
+
+	_, err := New(srv.URL, "k").UpdateProduct(context.Background(), 1, ProductInput{Name: "x", Images: []ProductImage{}})
+	require.NoError(t, err)
+}
+
 func TestClient_CreateProduct(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, http.MethodPost, r.Method)

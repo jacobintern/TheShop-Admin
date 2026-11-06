@@ -21,7 +21,7 @@ TheShop 電商系統的後台管理介面。單一 Go 專案，server-rendered �
 | 商品列表（含下架） | `GET /api/admin/product/list?page=&fetch=` |
 | 單筆商品 | `GET /api/admin/product/:id` |
 | 新增商品 | `POST /api/admin/product` → `{id}` |
-| 修改商品 | `PUT /api/admin/product/:id`（images 整組替換） |
+| 修改商品 | `PUT /api/admin/product/:id`（後台一律帶完整 images 陣列整組替換，空陣列＝清空） |
 | 上架／下架 | `PUT /api/admin/product/:id/status` body `{status: 0|1}` |
 
 回應格式 `{code, msg, data}`，`code` 0 成功；錯誤碼對應寫在 `internal/backend/client.go`。
@@ -71,7 +71,7 @@ docker run --rm -p 8081:8081 \
   theshop-admin
 ```
 
-映像為 multi-stage（Go build → alpine），`/app/data` 是 SQLite volume，`EXPOSE 8081`。
+映像為 multi-stage（golang:1.26-alpine build → alpine），`/app/data` 是 SQLite volume，`EXPOSE 8081`。
 
 ## 專案結構
 

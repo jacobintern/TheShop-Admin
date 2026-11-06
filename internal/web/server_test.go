@@ -251,6 +251,11 @@ func TestProductCreateAndEdit(t *testing.T) {
 	assert.Contains(t, body, `value="http://img/banner.png"`)
 	assert.Contains(t, body, "http://img/1.png")
 
+	resp, _ = env.do(t, http.MethodPost, "/products/1", url.Values{"name": {"牛奶"}, "price": {"60"}, "stock": {"10"}, "banner": {""}, "images": {""}}, nil)
+	assert.Equal(t, http.StatusSeeOther, resp.StatusCode)
+	assert.NotNil(t, env.be.products[1].Images, "清空圖片欄位要送空陣列，不能省略欄位")
+	assert.Len(t, env.be.products[1].Images, 0)
+
 	resp, _ = env.do(t, http.MethodPost, "/products/1/status", url.Values{"status": {"0"}, "back": {"/products/1/edit"}}, nil)
 	assert.Equal(t, http.StatusSeeOther, resp.StatusCode)
 	assert.Equal(t, 0, env.be.products[1].Status)
